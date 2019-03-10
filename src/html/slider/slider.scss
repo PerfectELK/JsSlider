@@ -1,14 +1,12 @@
 .slider__block{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  height: 100vh;
+  display: block;
+
   .slider{
-    display: flex;
-    align-self: center;
-    flex-direction: row;
-    justify-content: center;
-    position: relative;
+    display: block;
+    height: 100vh;
+    width: 70vw;
+    position: relative!important;
+    margin: 0 auto;
     transition: all 0.5s ease;
     .dot{
       cursor: pointer;
@@ -32,9 +30,15 @@
     }
 
     .slider-item{
-      display: flex;
+      display: block;
       flex-direction: row;
-      transition: all 0.5s ease;
+      transition: all 1s ease-out;
+      position: absolute!important;
+      top:50%;
+      left:50%;
+      opacity: 0;
+      transform: scale(0.5)  translate(-100%,-100%);
+      z-index: 50;
     }
     .side{
       transform: scale(.5);
@@ -43,15 +47,28 @@
   }
 }
 
-.slide__side{
-  transform: scale(.5) !important;
-}
 
 .slide__center{
-  transform: scale(1) !important;
+  transform: scale(1) translate(-50%,-50%) !important;
+  top: 50% !important;
+  left: 50% !important;
+  z-index: 100!important;
 }
 
-.slide__hide{
-  opacity: 0;
+.slide__visible{
+  opacity: 1!important;
+}
+
+.slide__left-side{
+  transform: scale(0.5) translateY(-100%)!important;
+  top: 50% !important;
+  left: 0 !important;
+}
+
+.slide__right-side{
+  transform: scale(0.5) translate(-200%,-100%)!important;
+  top: 50% !important;
+  //right: 100%!important;
+  left: 100%!important;
 }
 

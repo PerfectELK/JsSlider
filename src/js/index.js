@@ -9,7 +9,7 @@ var pelkSlider = function(selector,options){
         arrowClass:'.dot',
         itemsVisible:3,//Only odd number
         timeoutSeconds:5,
-        currentSlide:3,
+        currentSlide:0,
         arrowLeftClass:'.dot__left',
         arrowRightClass:'.dot__right'
     };
@@ -38,24 +38,20 @@ var pelkSlider = function(selector,options){
         let current = currentSlide;
         let minus = Math.floor(itemsVisible/2)
 
-        let order = 1;
         for(let i = 0; i < Math.floor(itemsVisible/2); i++){
             if(sliderItems[current - minus] !== undefined){
                 console.log('minus');
                 arrVisible.push(sliderItems[current - minus]);
-                sliderItems[current - minus].style.order =  order
-                order++
+
             }else{
                 arrVisible.push(sliderItems[sliderItems.length - minus]);
-                sliderItems[sliderItems.length - minus].style.order =  order
-                order++
+
             }
             minus++
         }
 
         arrVisible.push(sliderItems[current]);
-        sliderItems[current].style.order = order
-        order++
+
 
         let plusDo = Math.floor(itemsVisible/2)
         let plus = 0
@@ -63,12 +59,9 @@ var pelkSlider = function(selector,options){
         for(let i = 0; i < Math.floor(itemsVisible/2); i++){
             if(sliderItems[current + plusDo] !== undefined){
                 arrVisible.push(sliderItems[current + plusDo]);
-                sliderItems[current + plusDo].style.order = order
-                order++
+
             }else{
                 arrVisible.push(sliderItems[plus]);
-                sliderItems[plus].style.order = order
-                order++
             }
             plusDo--
             plus++
@@ -76,47 +69,84 @@ var pelkSlider = function(selector,options){
         return arrVisible;
     }
 
-    function setVisibleSliderItems(){
-        let visibleItems = getVisibleItems();
-        let currentSlide = getOption('currentSlide')
+    let sliderItems = selector.querySelectorAll(getOption('itemsClass'))
 
+    function setItems(event = 'left'){
 
         for(let i = 0; i < sliderItems.length; i++){
-            if(visibleItems.indexOf(sliderItems[i]) > -1){
-                console.log(sliderItems[i])
+            if(sliderItems[i].classList.contains('slide__center')){
                 sliderItems[i].classList.remove('slide__center')
-                sliderItems[i].classList.remove('slide__hide')
-                sliderItems[i].classList.add('slide__side')
-                sliderItems[i].style.display = 'flex';
-
-            }else{
-                sliderItems[i].classList.add('slide__hide')
-                sliderItems[i].style.display = 'none';
             }
+            if(event === 'left'){
+                if(sliderItems[i].classList.contains('slide__left-side')){
+                    sliderItems[i].classList.remove('slide__left-side')
+                }
+                if(sliderItems[i].classList.contains('slide__right-side')){
+                    sliderItems[i].classList.remove('slide__visible')
+                    sliderItems[i].classList.remove('slide__right-side')
+                }
+            }
+            if(event === 'right'){
+                console.log('right');
+                if(sliderItems[i].classList.contains('slide__right-side')){
+                    sliderItems[i].classList.remove('slide__right-side')
+                }
+                if(sliderItems[i].classList.contains('slide__left-side')){
+                    sliderItems[i].classList.remove('slide__visible')
+                    sliderItems[i].classList.remove('slide__left-side')
+                }
+            }
+           // sliderItems[i].classList.remove('slide__left-side')
+
         }
-        sliderItems[currentSlide].classList.add('slide__center')
+
+        let visibleItems = getVisibleItems();
+        let countsForSide = Math.floor(visibleItems.length / 2);
+
+        let before = countsForSide;
+        let after = countsForSide;
+
+        let count = 0;
+        for(let i = 0; i < before; i++){
+            if(!visibleItems[count].classList.contains('slide__visible')){
+                visibleItems[count].classList.add('slide__visible');
+            }
+            if(!visibleItems[count].classList.contains('slide__left-side')){
+                visibleItems[count].classList.add('slide__left-side');
+            }
+            count++
+        }
+
+        visibleItems[count].classList.add('slide__visible');
+        visibleItems[count].classList.add('slide__center');
+        count++
+
+        for(let i = 0; i < after; i++){
+            if(!visibleItems[count].classList.contains('slide__visible')){
+                visibleItems[count].classList.add('slide__visible');
+            }
+            if(!visibleItems[count].classList.contains('slide__right-side')){
+                visibleItems[count].classList.add('slide__right-side');
+            }
+            count++
+        }
+
     }
 
-    let sliderItems = selector.querySelectorAll(getOption('itemsClass'));
-    setVisibleSliderItems()
+    setItems()
 
-    let arrowLeft = selector.querySelector(getOption('arrowLeftClass'))
-    let arrowRight = selector.querySelector(getOption('arrowRightClass'))
-
-
-    arrowLeft.onclick = function(){
-        console.log('left')
-        let leftCurrent = (getOption('currentSlide') !== 0) ? getOption('currentSlide')-1 : sliderItems.length - 1
-        setOption('currentSlide',leftCurrent);
-        setVisibleSliderItems()
+    selector.querySelector(getOption('arrowLeftClass')).onclick = function(){
+        console.log('left event')
+        setOption('currentSlide',(getOption('currentSlide') != 0) ? getOption('currentSlide')  - 1 : sliderItems.length - 1);
+        setItems('left')
     }
 
-    arrowRight.onclick = function(){
-        console.log('right')
-        let leftCurrent = (getOption('currentSlide') !== sliderItems.length - 1) ? getOption('currentSlide')+1 : 0
-        setOption('currentSlide',leftCurrent);
-        setVisibleSliderItems()
+    selector.querySelector(getOption('arrowRightClass')).onclick = function(){
+        console.log('right event')
+        setOption('currentSlide',(getOption('currentSlide') != sliderItems.length - 1) ? getOption('currentSlide') + 1 : 0);
+        setItems('right')
     }
+
 
 
 
